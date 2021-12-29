@@ -22,6 +22,22 @@
     ]
   },
   
-  "permissions": ["contextMenus", "downloads", "tabs"]
+  "browser_action": {
+	"default_icon": "icons/zeroload.png",
+    "default_title": "Zeroload Settings",
+    "default_popup": "popup/zeroloader.html"
+  },
+  
+  "options_ui": {
+    "page": "options/options.html"
+  },
+  
+  "permissions": [
+	"contextMenus", 
+	"downloads", 
+	"tabs", 
+	"activeTab",
+	"storage"
+  ]
 
 }

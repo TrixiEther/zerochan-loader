@@ -1,6 +1,26 @@
 
 // Main script
 
+function findDownloadName(picNumber) {
+	
+	const links= document.getElementsByTagName("div");
+	const pReg = new RegExp('/([a-zA-Z.]*.full.' + picNumber + '.[a-z]*)$');
+	
+	for (let plink of links) {
+		
+		let href = plink.getAttribute('href');
+		let matchLink = pReg.exec(href);
+		
+		if (matchLink !== null && matchLink[1] !== undefined) {
+			return matchLink[1];
+		}
+		
+	}
+
+	return undefined;
+	
+}
+
 browser.contextMenus.create({
     id: "load-image",
 	targetUrlPatterns: ["*://*.zerochan.net/*"],
@@ -30,19 +50,13 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			}
 				
 			const imageUrl = info.srcUrl;
-			const tabUrl = tab.url;
-			
-			const imagePatternNumber = /[\/|full.]([0-9]*)(.[a-z]*)$/;
-			const tabPatternName = /\/([0-9a-zA-Z+]*)(\?p=[0-9]*)?$/;
+			const imagePatternNumber = /\/([0-9]*).[a-z]*$/;
 			
 			let regImageNumber = new RegExp(imagePatternNumber);
 			let matchImageNumber = regImageNumber.exec(imageUrl);
 			
-			let regTabName = new RegExp(tabPatternName);
-			let matchImageName = regTabName.exec(tabUrl);
-			
-			const downloadedFileSrc = "https://static.zerochan.net/" + matchImageName[1].replace(/\+/g, ".") + ".full." + matchImageNumber[1] + matchImageNumber[2];
-			let downloadedFileName = matchImageName[1].replace(/\+/g, ".") + ".full." + matchImageNumber[1] + matchImageNumber[2];
+			let downloadedFileName = findDownloadName(matchImageNumber[1]);
+			const downloadedFileSrc = "https://static.zerochan.net/" + downloadedFileName;
 			
 			if (useRelativePath === true) {
 				downloadedFileName = relativePath + downloadedFileName;

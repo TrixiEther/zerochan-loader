@@ -1,25 +1,34 @@
 
 // Main script
 
-function findDownloadName(picNumber) {
+let portFromCS;
+
+let useRelativePath = false;
+let relativePath = "";
+
+function connected(p) {
 	
-	const links= document.getElementsByTagName("a");
-	const pReg = new RegExp('/([a-zA-Z.]*.full.' + picNumber + '.[a-z]*)$');
+	portFromCS = p;
 	
-	for (let plink of links) {
+	portFromCS.onMessage.addListener(function(m) {
 		
-		let href = plink.getAttribute('href');
-		let matchLink = pReg.exec(href);
-		
-		if (matchLink !== null && matchLink[1] !== undefined) {
-			return matchLink[1];
+		let downloadedFileName = m.linkName;
+		const downloadedFileSrc = "https://static.zerochan.net/" + downloadedFileName;
+
+		if (useRelativePath === true) {
+			downloadedFileName = relativePath + downloadedFileName;
 		}
 		
-	}
+		browser.downloads.download({
+		  url : downloadedFileSrc,
+		  filename : downloadedFileName,
+		  conflictAction : 'uniquify'
+		});
 
-	return undefined;
-	
+	});
 }
+
+browser.runtime.onConnect.addListener(connected);
 
 browser.contextMenus.create({
     id: "load-image",
@@ -35,9 +44,6 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "load-image") {
 				
 		browser.storage.sync.get(["useRelativePath", "relativePath"]).then((item) => {
-			
-			let useRelativePath = false;
-			let relativePath = "";
 			
 			if (item.useRelativePath === undefined || item.useRelativePath === false) {
 				useRelativePath = false;
@@ -55,18 +61,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			let regImageNumber = new RegExp(imagePatternNumber);
 			let matchImageNumber = regImageNumber.exec(imageUrl);
 			
-			let downloadedFileName = findDownloadName(matchImageNumber[1]);
-			const downloadedFileSrc = "https://static.zerochan.net/" + downloadedFileName;
-			
-			if (useRelativePath === true) {
-				downloadedFileName = relativePath + downloadedFileName;
-			}
-			
-			browser.downloads.download({
-			  url : downloadedFileSrc,
-			  filename : downloadedFileName,
-			  conflictAction : 'uniquify'
-			});
+			portFromCS.postMessage({picNumber: matchImageNumber[1]});			
 			
 		});
 		

@@ -22,6 +22,13 @@
     ]
   },
   
+  "content_scripts": [
+	{
+      "matches": ["*://*.zerochan.net/*"],
+      "js": ["scripts/content-script.js"]
+	}
+  ],
+  
   "browser_action": {
 	"default_icon": "icons/zeroload.png",
     "default_title": "Zeroload Settings",

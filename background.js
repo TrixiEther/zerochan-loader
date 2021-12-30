@@ -3,7 +3,7 @@
 
 function findDownloadName(picNumber) {
 	
-	const links= document.getElementsByTagName("div");
+	const links= document.getElementsByTagName("a");
 	const pReg = new RegExp('/([a-zA-Z.]*.full.' + picNumber + '.[a-z]*)$');
 	
 	for (let plink of links) {

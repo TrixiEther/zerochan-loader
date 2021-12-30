@@ -33,7 +33,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			const tabUrl = tab.url;
 			
 			const imagePatternNumber = /[\/|full.]([0-9]*)(.[a-z]*)$/;
-			const tabPatternName = /\/([0-9a-zA-z+]*)$/;
+			const tabPatternName = /\/([0-9a-zA-Z+]*)(\?p=[0-9]*)?$/;
 			
 			let regImageNumber = new RegExp(imagePatternNumber);
 			let matchImageNumber = regImageNumber.exec(imageUrl);

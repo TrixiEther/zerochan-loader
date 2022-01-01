@@ -5,18 +5,31 @@ let portFromCS;
 
 let useRelativePath = false;
 let relativePath = "";
+let createSubfolders = false;
 
 function connected(p) {
 	
 	portFromCS = p;
 	
 	portFromCS.onMessage.addListener(function(m) {
+
+		let subfolder = "";
+
+		if (createSubfolders === true) {
+
+			const imageNamePattern = /^([0-9a-zA-Z.]*).full/;
+			let regImageName = new RegExp(imageNamePattern);
+
+			let matchImageName = regImageName.exec(m.linkName);
+			subfolder = matchImageName[1] + "/";
+
+		}
 		
 		let downloadedFileName = m.linkName;
 		const downloadedFileSrc = "https://static.zerochan.net/" + downloadedFileName;
 
 		if (useRelativePath === true) {
-			downloadedFileName = relativePath + downloadedFileName;
+			downloadedFileName = relativePath + subfolder.replace(/\./g, " ") + downloadedFileName;
 		}
 		
 		browser.downloads.download({
@@ -43,7 +56,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 	
     if (info.menuItemId === "load-image") {
 				
-		browser.storage.sync.get(["useRelativePath", "relativePath"]).then((item) => {
+		browser.storage.sync.get(["useRelativePath", "relativePath", "createSubfolders"]).then((item) => {
 			
 			if (item.useRelativePath === undefined || item.useRelativePath === false) {
 				useRelativePath = false;
@@ -53,6 +66,10 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			
 			if (item.relativePath !== undefined) {
 				relativePath = item.relativePath;
+			}
+
+			if (item.createSubfolders !== undefined) {
+				createSubfolders = item.createSubfolders;
 			}
 				
 			const imageUrl = info.srcUrl;

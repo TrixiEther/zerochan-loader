@@ -5,6 +5,7 @@ window.onload = function() {
 	
 	browser.storage.sync.get("useRelativePath").then(setRelPathOnLoad, onError);
 	browser.storage.sync.get("relativePath").then(setZeroloadPathOnLoad, onError);
+	browser.storage.sync.get("createSubfolders").then(setCreateSubfoldersOnLoad, onError);
 	
 }
 
@@ -16,6 +17,24 @@ zeroloaderPathSave.onclick = function() {
 		relativePath: path
 	});
 	
+}
+
+createSubfolders.onchange = function() {
+
+	if (document.getElementById("createSubfolders").checked === true) {
+		
+		browser.storage.sync.set({
+			createSubfolders: true
+		});
+		
+	} else {
+		
+		browser.storage.sync.set({
+			createSubfolders: false
+		});
+		
+	}
+
 }
 
 useRelPath.onchange = function() {
@@ -74,4 +93,14 @@ function setZeroloadPathOnLoad(item) {
 	  
 	} 
 	
+}
+
+function setCreateSubfoldersOnLoad(item) {
+
+	if (item.createSubfolders !== undefined) {
+
+		document.getElementById("createSubfolders").checked = item.createSubfolders;
+
+	}
+
 }

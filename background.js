@@ -17,7 +17,7 @@ function connected(p) {
 
 		if (createSubfolders === true) {
 
-			const imageNamePattern = /^([0-9a-zA-Z.]*).full/;
+			const imageNamePattern = /^([0-9a-zA-Z-.]*).full/;
 			let regImageName = new RegExp(imageNamePattern);
 
 			let matchImageName = regImageName.exec(m.linkName);
